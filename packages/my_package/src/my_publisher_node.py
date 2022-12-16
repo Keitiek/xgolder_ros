@@ -27,10 +27,55 @@ class MyPublisherNode(DTROS):
         # publish message every 1 second
         rate = rospy.Rate(20) # 1Hz
         while not rospy.is_shutdown():
+            
             bus = SMBus(1)
-            speed.vel_left = 1
-            speed.vel_right = 1
             read = bus.read_byte_data(62,17)
+
+            if read == 1:
+                speed.vel_left = -0.25
+                speed.vel_right = 0.25
+            elif read == 3:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 2:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 6:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 4:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 12:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 8:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 24:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 16:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 48:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 32:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 96:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 64:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 192:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
+            elif read == 128:
+                speed.vel_left = 0.25
+                speed.vel_right = 0.25
             self.pub.publish(speed)
             rate.sleep()
             bus.close()
