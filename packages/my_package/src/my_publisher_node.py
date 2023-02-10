@@ -28,7 +28,7 @@ class MyPublisherNode(DTROS):
         rate = rospy.Rate(20) # 1Hz
         while not rospy.is_shutdown():
             
-            bus = SMBus(1)
+            bus = SMBus(15)
             read = bus.read_byte_data(62,17)
 
             if read == 1:
@@ -82,8 +82,9 @@ class MyPublisherNode(DTROS):
             self.pub.publish(speed)
             rate.sleep()
             bus.close()
-            print(read)
-            
+            print("Lugeja väärtus 10 süsteemis"+read)
+            print(speed.vel_left)
+            print(speed.vel_right )
 if __name__ == '__main__':
     # create the node
     node = MyPublisherNode(node_name='my_publisher_node')
