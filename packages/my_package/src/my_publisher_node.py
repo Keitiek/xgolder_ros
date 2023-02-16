@@ -31,60 +31,46 @@ class MyPublisherNode(DTROS):
             bus = SMBus(15)
             read = bus.read_byte_data(62,17)
 
-            if read == 1:
-                speed.vel_left = 0.1
-                speed.vel_right = -0.1
-            elif read == 3:
-                speed.vel_left = 0.05
-                speed.vel_right = -0.05
-            elif read == 2:
-                speed.vel_left = 0.3
-                speed.vel_right = 0.1
-            elif read == 6:
-                speed.vel_left = 0.3
-                speed.vel_right = 0.15
-            elif read == 4:
-                speed.vel_left = 0.3
-                speed.vel_right = 0.2
-            elif read == 12:
-                speed.vel_left = 0.3
-                speed.vel_right = 0.25
-                ###
-            elif read == 8:
-                speed.vel_left = 0.3
-                speed.vel_right = 0.3
-            elif read == 24:
-                speed.vel_left = 0.4
-                speed.vel_right = 0.4
-            elif read == 16:
-                speed.vel_left = 0.3
-                speed.vel_right = 0.3
-                ###
-            elif read == 48:
-                speed.vel_left = 0.25
-                speed.vel_right = 0.3
-            elif read == 32:
-                speed.vel_left = 0.2
-                speed.vel_right = 0.3
-            elif read == 96:
-                speed.vel_left = 0.15
-                speed.vel_right = 0.3
-            elif read == 64:
-                speed.vel_left = 0.1
-                speed.vel_right = 0.3
-            elif read == 192:
-                speed.vel_left = -0.05
-                speed.vel_right = 0.05
-            elif read == 128:
-                speed.vel_left = -0.1
-                speed.vel_right = 0.1
+            #-------------P controller---------------------------------------
+            
+            print("Lugeja väärtus 10 süsteemis: "+str(read))# algne 10 süsteemi väärtus
+            print("2 süsteemi väärtus: "+str(bin(read)[2:].zfill(8)))# 10 tehtud 2 süsteemi
+            
+            kahendsusteem = bin(read)[2:].zfill(8)
+            masiiv = [-16,-12,-8,-4,4,8,12,16]
+            
+            print(kahendsusteem)
+            
+            väärtus = []
+            
+            for indx, ele in enumerate(kahendsusteem):
+                if ele == "1":
+                    väärtus.append(masiiv[indx])   
+            print(väärtus)
+           
+            sum = 0
+            for value in väärtus:
+                sum =sum + value
+            print(sum)
+            
+            if len(väärtus) != 0:
+                err = (sum / len(väärtus)) * 0.05
+            print(len(väärtus))
+            
+            #------------------------------------------------------------------------------------ eelmise ratta kiirus salvestada
+
+            speed.vel_left = 0.3 + err
+            speed.vel_right = 0.3 - err
+              
                 
             self.pub.publish(speed)
             rate.sleep()
             bus.close()
-            print("Lugeja väärtus 10 süsteemis"+read)
-            print(speed.vel_left)
-            print(speed.vel_right )
+            
+            #print(speed.vel_left)
+           # print(speed.vel_right )
+            
+            
 if __name__ == '__main__':
     # create the node
     node = MyPublisherNode(node_name='my_publisher_node')
