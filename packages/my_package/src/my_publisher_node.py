@@ -9,6 +9,7 @@ from smbus2 import SMBus
 from duckietown_msgs.msg import WheelsCmdStamped
 from sensor_msgs.msg import Range
 
+
 speed = WheelsCmdStamped()
 
 class MyPublisherNode(DTROS):
@@ -18,7 +19,14 @@ class MyPublisherNode(DTROS):
         super(MyPublisherNode, self).__init__(node_name=node_name, node_type=NodeType.GENERIC)
         # construct publisher
         self.pub = rospy.Publisher('/xgolder/wheels_driver_node/wheels_cmd', WheelsCmdStamped, queue_size=10)
-        
+        self.tof = rospy.Subscriber('/xgolder/front_center_tof_driver_node/range', Range, self.callback)
+
+        self.range = 0
+        self.sein = 0
+    
+    def callback(self, data):
+        self.range = data.range
+
     def on_shutdown(self):
         speed.vel_left = 0
         speed.vel_right = 0
@@ -34,9 +42,15 @@ class MyPublisherNode(DTROS):
         prev_error = 0
         
         # Set initial parameters for duck's devel run ( Kp, Ki, Kd, v_max).
-        rospy.set_param("/pidv", [0, 0, 0, 0.3])
+        rospy.set_param("/pidv", [0.03, 0.0069, 0.05, 0.3005])
         
-        while not rospy.is_shutdown():            
+        while not rospy.is_shutdown(): 
+            #Tof range in cm
+            self.kaugus_cm = round(self.range*100, 1)
+            print("kaugus on: ",self.kaugus_cm, "Cm")    
+       
+            #Tof range in cm
+            
             bus = SMBus(15)
             read = bus.read_byte_data(62,17)
             
@@ -104,7 +118,32 @@ class MyPublisherNode(DTROS):
             
             prev_error = err
             start_time = time.time()
-            
+          
+        
+         
+        
+      
+            if self.kaugus_cm <= 20.0: 
+                speed.vel_right = 0.1
+                speed.vel_left = 0
+                self.pub.publish(speed)
+                self.kaugus_cm = round(self.range*100, 1)
+                time.sleep(0.6)
+                speed.vel_right = 0.1
+                speed.vel_left = 0.1
+                self.pub.publish(speed)
+                time.sleep(2.2)
+                speed.vel_right = 0
+                speed.vel_left = 0.1
+                self.pub.publish(speed)
+                time.sleep(0.6)
+            else:             
+                 rate.sleep()
+     
+
+                
+       
+
 if __name__ == '__main__':
     # create the node
     node = MyPublisherNode(node_name='my_publisher_node')
