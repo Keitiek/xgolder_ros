@@ -118,7 +118,7 @@ class MyPublisherNode(DTROS):
             
             prev_error = err
             start_time = time.time()
-            
+        
             if self.kaugus_cm <= 20.0: 
                 speed.vel_right = 0.1
                 speed.vel_left = 0
@@ -134,8 +134,9 @@ class MyPublisherNode(DTROS):
                 self.pub.publish(speed)
                 time.sleep(0.6)
             else:             
-                 rate.sleep()              
+                 rate.sleep()
                         
+
 if __name__ == '__main__':
     # create the node
     node = MyPublisherNode(node_name='my_publisher_node')
