@@ -69,5 +69,7 @@ if __name__ == '__main__':
         imu_msg.angular_velocity.z = gyro_data['z']
 
         imu_pub.publish(imu_msg)
+        
+        # imu vaja koguda mingi kogus väärtusi ja siis võtta nende kesmine. kohapeal seistes peaks ta olema nulli lähdane 
 
         rate.sleep()

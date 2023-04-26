@@ -118,7 +118,7 @@ class MyPublisherNode(DTROS):
             
             prev_error = err
             start_time = time.time()
-            
+        
             if self.kaugus_cm <= 20.0: 
                 speed.vel_right = 0.1
                 speed.vel_left = 0
@@ -134,8 +134,24 @@ class MyPublisherNode(DTROS):
                 self.pub.publish(speed)
                 time.sleep(0.6)
             else:             
-                 rate.sleep()              
+                 rate.sleep()
+            
+            
+            # Kastist mööda kood=
+            while self.kaugus_cm <=25 and not self.kaugus_cm >=25:
+                self.kaugus_cm = round(self.range*100, 1)
+                speed.vel_right = 0
+                speed.vel_left = 0.3
+                self.pub.publish(speed)
+                self.sein = 1
+            if self.sein == 1:
+                speed.vel_right = 0.5
+                speed.vel_left = 0.25
+                self.pub.publish(speed)
+                time.sleep(2.1)
+                self.sein = 0
                         
+
 if __name__ == '__main__':
     # create the node
     node = MyPublisherNode(node_name='my_publisher_node')
